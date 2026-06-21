@@ -136,3 +136,42 @@ export interface MoveIssuePayload {
     /** Target index within the destination column's issueIds array */
     toIndex: number;
 }
+
+// ============================================================
+// Comments & Activity Log
+// ============================================================
+
+export interface Comment {
+    id: string;
+    issueId: string;
+    authorId: string;
+    body: string;
+    createdAt: string; // ISO 8601
+}
+
+export type ActivityAction =
+    | "CREATED"
+    | "STATUS_CHANGED"
+    | "PRIORITY_CHANGED"
+    | "ASSIGNEE_CHANGED"
+    | "TITLE_CHANGED"
+    | "LABEL_ADDED"
+    | "LABEL_REMOVED";
+
+export interface ActivityLogEntry {
+    id: string;
+    issueId: string;
+    actorId: string;
+    action: ActivityAction;
+    /** Human-readable "from" value, if applicable (e.g. previous status) */
+    fromValue: string | null;
+    /** Human-readable "to" value, if applicable (e.g. new status) */
+    toValue: string | null;
+    createdAt: string;
+}
+
+export interface AddCommentPayload {
+    issueId: string;
+    authorId: string;
+    body: string;
+}

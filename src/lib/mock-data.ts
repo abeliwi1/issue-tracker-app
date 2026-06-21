@@ -7,7 +7,8 @@ import {
     IssuePriority,
     ProjectStatus,
     BoardColumnMap,
-} from "../types";
+    Comment, ActivityLogEntry
+} from "@/types";
 
 // ============================================================
 // Users
@@ -325,6 +326,113 @@ export const MOCK_ISSUES: Issue[] = [
     },
 ];
 
+
+// ============================================================
+// Comments — a few initially seeded per issue for testing/UI purposes
+// ============================================================
+
+export const MOCK_COMMENTS: Comment[] = [
+    {
+        id: "cmt_1",
+        issueId: "iss_7",
+        authorId: "usr_1",
+        body: "Should we use exponential backoff with jitter here, or keep it simple with fixed intervals?",
+        createdAt: "2025-05-12T10:15:00Z",
+    },
+    {
+        id: "cmt_2",
+        issueId: "iss_7",
+        authorId: "usr_2",
+        body: "Going with jitter — flat backoff causes thundering herd when a downstream service recovers.",
+        createdAt: "2025-05-12T11:02:00Z",
+    },
+    {
+        id: "cmt_3",
+        issueId: "iss_8",
+        authorId: "usr_2",
+        body: "Nice work on the collision detection switch to closestCorners — much more accurate near column edges.",
+        createdAt: "2025-06-04T09:30:00Z",
+    },
+    {
+        id: "cmt_4",
+        issueId: "iss_6",
+        authorId: "usr_3",
+        body: "Confirmed — the cleanup function in useEffect was missing the unsubscribe call. Fix incoming.",
+        createdAt: "2025-05-29T08:45:00Z",
+    },
+];
+
+// ============================================================
+// Activity Log — auto-generated narrative per issue
+// ============================================================
+
+export const MOCK_ACTIVITY: ActivityLogEntry[] = [
+    {
+        id: "act_1",
+        issueId: "iss_7",
+        actorId: "usr_1",
+        action: "CREATED",
+        fromValue: null,
+        toValue: null,
+        createdAt: "2025-05-01T09:00:00Z",
+    },
+    {
+        id: "act_2",
+        issueId: "iss_7",
+        actorId: "usr_2",
+        action: "STATUS_CHANGED",
+        fromValue: "Todo",
+        toValue: "In Progress",
+        createdAt: "2025-05-08T13:20:00Z",
+    },
+    {
+        id: "act_3",
+        issueId: "iss_7",
+        actorId: "usr_1",
+        action: "PRIORITY_CHANGED",
+        fromValue: "Medium",
+        toValue: "High",
+        createdAt: "2025-05-09T10:00:00Z",
+    },
+    {
+        id: "act_4",
+        issueId: "iss_8",
+        actorId: "usr_2",
+        action: "CREATED",
+        fromValue: null,
+        toValue: null,
+        createdAt: "2025-05-10T10:00:00Z",
+    },
+    {
+        id: "act_5",
+        issueId: "iss_8",
+        actorId: "usr_3",
+        action: "ASSIGNEE_CHANGED",
+        fromValue: "Unassigned",
+        toValue: "Jordan Lee",
+        createdAt: "2025-05-11T09:00:00Z",
+    },
+    {
+        id: "act_6",
+        issueId: "iss_6",
+        actorId: "usr_3",
+        action: "CREATED",
+        fromValue: null,
+        toValue: null,
+        createdAt: "2025-05-01T08:00:00Z",
+    },
+    {
+        id: "act_7",
+        issueId: "iss_6",
+        actorId: "usr_1",
+        action: "PRIORITY_CHANGED",
+        fromValue: "High",
+        toValue: "Urgent",
+        createdAt: "2025-05-27T08:00:00Z",
+    },
+];
+
+
 // ============================================================
 // Board Column Definitions
 // ============================================================
@@ -380,3 +488,20 @@ export const generateIssueKey = (projectId: string, existingIssues: Issue[]): st
 /** Generate a naive unique ID for new entities */
 export const generateId = (prefix: string): string =>
     `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+
+/** Build a fresh activity log entry for an issue field change */
+export const buildActivityEntry = (
+    issueId: string,
+    actorId: string,
+    action: import("@/types").ActivityAction,
+    fromValue: string | null,
+    toValue: string | null
+): ActivityLogEntry => ({
+    id: generateId("act"),
+    issueId,
+    actorId,
+    action,
+    fromValue,
+    toValue,
+    createdAt: new Date().toISOString(),
+});

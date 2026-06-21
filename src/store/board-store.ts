@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-
 import {
     Issue,
     User,
@@ -13,6 +12,9 @@ import {
     CreateIssuePayload,
     UpdateIssuePayload,
     MoveIssuePayload,
+    Comment,
+    ActivityLogEntry,
+    AddCommentPayload,
 } from "../types";
 import {
     MOCK_ISSUES,
@@ -22,6 +24,9 @@ import {
     INITIAL_COLUMNS,
     generateId,
     generateIssueKey,
+    MOCK_COMMENTS,
+    MOCK_ACTIVITY,
+    buildActivityEntry,
 } from "../lib/mock-data";
 
 // ============================================================
@@ -34,6 +39,8 @@ interface BoardState {
     users: Record<string, User>;
     projects: Record<string, Project>;
     labels: Record<string, Label>;
+    comments: Record<string, Comment>;
+    activityLog: Record<string, ActivityLogEntry>;
 
     // ── Board structure ────────────────────────────────────────
     columns: BoardColumnMap;
@@ -50,6 +57,7 @@ interface BoardState {
     isCreateModalOpen: boolean;
     /** Issue ID currently being dragged (for visual feedback) */
     draggingIssueId: string | null;
+    
 }
 
 // ============================================================
@@ -81,6 +89,11 @@ interface BoardActions {
     openCreateModal: () => void;
     closeCreateModal: () => void;
     setDraggingIssue: (issueId: string | null) => void;
+
+    // ── Comment and activity actions ───────────────────────────
+    addComment: (payload: AddCommentPayload) => void;
+    getCommentsForIssue: (issueId: string) => Comment[];
+    getActivityForIssue: (issueId: string) => ActivityLogEntry[];
 }
 
 // ============================================================
@@ -110,6 +123,8 @@ export const useBoardStore = create<BoardState & BoardActions>()(
                 users: normalise(MOCK_USERS),
                 projects: normalise(MOCK_PROJECTS),
                 labels: normalise(MOCK_LABELS),
+                comments: normalise(MOCK_COMMENTS),
+                activityLog: normalise(MOCK_ACTIVITY),
                 columns: INITIAL_COLUMNS,
                 activeProjectId: "proj_1",
                 activeView: "board",
@@ -159,21 +174,59 @@ export const useBoardStore = create<BoardState & BoardActions>()(
                         if (!issue) return;
 
                         const now = new Date().toISOString();
+                        const actorId = "usr_1"; // current user
 
-                        // If status is changing, update column membership
+                        // Status change → log activity
                         if (payload.status && payload.status !== issue.status) {
-                            // Remove from old column
                             const oldCol = state.columns[issue.status];
                             oldCol.issueIds = oldCol.issueIds.filter((id) => id !== payload.id);
-                            // Add to new column
                             state.columns[payload.status].issueIds.push(payload.id);
+
+                            const entry = buildActivityEntry(
+                                issue.id,
+                                actorId,
+                                "STATUS_CHANGED",
+                                issue.status,
+                                payload.status
+                            );
+                            state.activityLog[entry.id] = entry;
+
                             issue.status = payload.status;
                         }
 
-                        if (payload.title !== undefined) issue.title = payload.title;
+                        // Priority change → log activity
+                        if (payload.priority !== undefined && payload.priority !== issue.priority) {
+                            const entry = buildActivityEntry(
+                                issue.id,
+                                actorId,
+                                "PRIORITY_CHANGED",
+                                issue.priority,
+                                payload.priority
+                            );
+                            state.activityLog[entry.id] = entry;
+                            issue.priority = payload.priority;
+                        }
+
+                        // Assignee change → log activity
+                        if (payload.assigneeId !== undefined && payload.assigneeId !== issue.assigneeId) {
+                            const fromUser = issue.assigneeId ? state.users[issue.assigneeId]?.name : "Unassigned";
+                            const toUser = payload.assigneeId ? state.users[payload.assigneeId]?.name : "Unassigned";
+
+                            const entry = buildActivityEntry(
+                                issue.id,
+                                actorId,
+                                "ASSIGNEE_CHANGED",
+                                fromUser ?? "Unassigned",
+                                toUser ?? "Unassigned"
+                            );
+                            state.activityLog[entry.id] = entry;
+                            issue.assigneeId = payload.assigneeId;
+                        }
+
+                        if (payload.title !== undefined && payload.title !== issue.title) {
+                            issue.title = payload.title;
+                        }
                         if (payload.description !== undefined) issue.description = payload.description;
-                        if (payload.priority !== undefined) issue.priority = payload.priority;
-                        if (payload.assigneeId !== undefined) issue.assigneeId = payload.assigneeId;
                         if (payload.labelIds !== undefined) issue.labelIds = payload.labelIds;
                         if (payload.storyPoints !== undefined) issue.storyPoints = payload.storyPoints;
                         if (payload.dueDate !== undefined) issue.dueDate = payload.dueDate;
@@ -199,6 +252,32 @@ export const useBoardStore = create<BoardState & BoardActions>()(
                             state.selectedIssueId = null;
                         }
                     });
+                },
+
+                addComment: (payload) => {
+                    set((state) => {
+                        const id = generateId("cmt");
+                        const comment: Comment = {
+                            id,
+                            issueId: payload.issueId,
+                            authorId: payload.authorId,
+                            body: payload.body,
+                            createdAt: new Date().toISOString(),
+                        };
+                        state.comments[id] = comment;
+                    });
+                },
+
+                getCommentsForIssue: (issueId) => {
+                    return Object.values(get().comments)
+                        .filter((c) => c.issueId === issueId)
+                        .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+                },
+
+                getActivityForIssue: (issueId) => {
+                    return Object.values(get().activityLog)
+                        .filter((a) => a.issueId === issueId)
+                        .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
                 },
 
                 // ── Optimistic Drag-and-Drop Move ──────────────────────

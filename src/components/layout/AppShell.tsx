@@ -3,6 +3,7 @@ import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { CreateIssueModal } from "@/components/ui/CreateIssueModal";
 import { useBoardStore } from "@/store/board-store"; 
+import { IssueDetailModal } from "../ui/IssueDetailModal";
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -29,8 +30,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 </main>
             </div>
 
-            {/* Global modal — rendered outside column flow */}
+            {/* Global modals/dialogs — rendered outside column flow */}
             <CreateIssueModal />
+            <IssueDetailModal/>
         </div>
     );
 };
