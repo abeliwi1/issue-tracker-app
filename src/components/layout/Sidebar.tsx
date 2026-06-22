@@ -13,6 +13,7 @@ import { useBoardStore } from "@/store/board-store";
 import { MOCK_USERS } from "@/lib/mock-data";
 import { Avatar } from "@/components/ui/Avatar";
 import { ProjectStatus } from "@/types";
+import { ModeThemeToggle } from "../ui/ModeThemeToggle";
 
 const VIEW_NAV = [
     { id: "board" as const, label: "Board", icon: LayoutGrid },
@@ -161,7 +162,7 @@ export const Sidebar: React.FC = () => {
             </nav>
 
             {/* Bottom: user + settings */}
-            <div className="px-2 py-3 border-t border-[var(--border)] space-y-0.5">
+            <div className="px-2 py-3 border-t border-[var(--border)] space-y-2">
                 <button
                     className="
             w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm
@@ -172,16 +173,18 @@ export const Sidebar: React.FC = () => {
                     <HelpCircle className="w-4 h-4 text-[var(--text-muted)]" strokeWidth={1.75} />
                     Help
                 </button>
-                <button
-                    className="
-            w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm
-            text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]
-            hover:text-[var(--text-primary)] transition-colors
-          "
-                >
-                    <Settings className="w-4 h-4 text-[var(--text-muted)]" strokeWidth={1.75} />
-                    Settings
-                </button>
+                <div className="flex items-center gap-0.5">
+                    <button
+                        className="
+              flex-1 flex items-center gap-2 px-2 py-1.5 rounded-md text-sm
+              text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]
+              hover:text-[var(--text-primary)] transition-colors
+            "
+                    >
+                        <Settings className="w-4 h-4 text-[var(--text-muted)]" strokeWidth={1.75} />
+                        Settings
+                    </button>
+                </div>
 
                 {/* Current user */}
                 <div className="flex items-center gap-2.5 px-2 py-1.5 mt-1">
@@ -194,6 +197,7 @@ export const Sidebar: React.FC = () => {
                             {currentUser.role.toLowerCase()}
                         </p>
                     </div>
+                    <ModeThemeToggle />
                 </div>
             </div>
         </aside>

@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 @layer base {
-    :root {
+    :root,
+    [data-theme="dark"] {
         --bg-app: #0a0a0f;
         --bg-surface: #111118;
         --bg-elevated: #1a1a24;
@@ -13,8 +14,24 @@
         --text-secondary: #8b8ba7;
         --text-muted: #4a4a6a;
         --accent: #0055ff;
-        --accent-hover: #4338ca;
+        --accent-hover: #0545c4;
         --accent-subtle: #1e1b4b;
+    }
+       
+    
+    [data-theme="light"] {
+        --bg-app: #fafafa;
+        --bg-surface: #ffffff;
+        --bg-elevated: #ffffff;
+        --bg-hover: #f1f1f4;
+        --border: #e4e4e9;
+        --border-focus: #4f46e5;
+        --text-primary: #18181f;
+        --text-secondary: #5c5c70;
+        --text-muted: #9a9aac;
+        --accent: #4f46e5;
+        --accent-hover: #4338ca;
+        --accent-subtle: #eef2ff;
     }
 
     * {
@@ -26,6 +43,7 @@
         color: var(--text-primary);
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
         -webkit-font-smoothing: antialiased;
+        transition: background-color 150ms ease, color 150ms ease;
     }
 
     ::-webkit-scrollbar {

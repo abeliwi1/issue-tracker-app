@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { KanbanBoard } from "@/components/board/KanbanBoard";
 import { useBoardStore } from "@/store/board-store";
@@ -54,6 +54,11 @@ const BacklogView: React.FC = () => {
 
 const App: React.FC = () => {
   const activeView = useBoardStore((s) => s.activeView);
+  const theme = useBoardStore((s) => s.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   return (
     <AppShell>
