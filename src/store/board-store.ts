@@ -416,7 +416,7 @@ export const useBoardStore = create<BoardState & BoardActions>()(
                 }))
             ),
             {
-                name: "board-data-storage",
+                name: "fluxtrack-data-storage",
                 storage: createJSONStorage(() => localStorage),
                 // Only persist actual data — never persist transient UI state
                 partialize: (state) => ({

@@ -62,10 +62,10 @@ export const Sidebar: React.FC = () => {
               flex items-center justify-center flex-shrink-0
             "
                     >
-                        <span className="text-[10px] font-bold text-white">O</span>
+                        <span className="text-[10px] font-bold text-white">Ft</span>
                     </div>
                     <span className="text-sm font-semibold text-[var(--text-primary)] truncate">
-                        Orbit
+                        FluxTrak
                     </span>
                     <ChevronDown
                         className="
