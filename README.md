@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# FluxTrak
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Kanban-style issue tracker built with React and TypeScript, inspired by Linear. Built as a portfolio project to demonstrate state management, drag-and-drop, and component architecture.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- **React 19** + **Vite**
+- **TypeScript** (strict mode)
+- **Zustand** with Immer middleware for global state
+- **@dnd-kit** for drag-and-drop
+- **Tailwind CSS v3**
+- **Lucide React** for icons
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Kanban board with drag-and-drop across columns (Backlog → Todo → In Progress → Done)
+- Create, edit, and delete issues with a detail modal
+- Inline editing with explicit Save/Cancel and unsaved-changes warnings
+- Comments and activity log per issue
+- Live search and filter by assignee and priority
+- Light/dark theme toggle, persisted across sessions
+- Full localStorage persistence — board state survives page refresh
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open `http://localhost:5173`.
 
+To reset to the original mock data:
 ```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+// In browser console
+localStorage.removeItem("fluxtrak-storage");
+location.reload();
 ```
+
+---
+
+## Project Structure
+
+```
+src/
+├── types/index.ts              # TypeScript interfaces and enums
+├── lib/mock-data.ts            # Seeded relational mock data
+├── store/board-store.ts        # Zustand store with all actions
+├── hooks/use-board-filters.ts  # Filtered board selectors
+└── components/
+    ├── layout/                 # AppShell, Sidebar, TopBar
+    ├── board/                  # KanbanBoard, BoardColumn, IssueCard
+    └── ui/                     # Avatar, modals, icons, ThemeToggle
+```
+
+---
+
+## A Few Things Worth Noting
+
+**Normalized state.** Issues, users, and labels are stored as `Record<string, T>` maps. Columns hold ordered arrays of IDs. Any update to an entity is O(1) — no array scanning.
+
+**Selector discipline.** Array derivations like `.map().filter()` are never run inside Zustand selectors, since they return new references on every call and cause infinite re-render loops. Transformations happen outside the selector in the render body or a `useMemo`.
+
+**Optimistic drag-and-drop.** `moveIssue` updates both the column `issueIds` arrays and the issue's `status` field atomically inside a single Immer draft. No intermediate states.
+
+**Selective persistence.** Zustand's `partialize` option persists only data state (issues, columns, comments). UI state (open modals, active filters, drag state) is intentionally excluded so the app always reloads clean.
+
+**Theme system.** Light and dark mode are driven by CSS custom properties on `data-theme` on `<html>`. No component-level changes needed — switching themes is one DOM attribute change.
+
+---
+
+## License
+
+MIT
