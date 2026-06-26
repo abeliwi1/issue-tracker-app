@@ -2,7 +2,7 @@ import React from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
-import { BoardColumn as BoardColumnType, IssueStatus } from "@/types";
+import { BoardColumn as BoardColumnType } from "@/types";
 import { useBoardStore } from "@/store/board-store";
 import { IssueCard } from "./IssueCard";
 import { STATUS_CONFIG } from "@/components/ui/StatusBadge";

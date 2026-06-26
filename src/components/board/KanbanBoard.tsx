@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
     DndContext,
     DragOverlay,
     DragStartEvent,
-    DragOverEvent,
     DragEndEvent,
     PointerSensor,
     KeyboardSensor,
@@ -63,7 +62,7 @@ export const KanbanBoard: React.FC = () => {
 
     // Handles live cross-column hover feedback — dnd-kit fires this
     // continuously as the dragged item moves over droppable targets.
-    const handleDragOver = (event: DragOverEvent) => {
+    const handleDragOver = () => {
         // Intentionally left minimal: BoardColumn's `isOver` state from
         // useDroppable already provides visual feedback. We only need to
         // commit the actual move on drag end to avoid excessive store writes.

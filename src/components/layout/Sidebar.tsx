@@ -5,7 +5,6 @@ import {
     AlignLeft,
     ChevronDown,
     ChevronRight,
-    Circle,
     Settings,
     HelpCircle,
 } from "lucide-react";
@@ -38,7 +37,7 @@ export const Sidebar: React.FC = () => {
 
     const currentUser = MOCK_USERS[0];
     const projectList = Object.values(projects);
-    const activeProject = projects[activeProjectId];
+    //const activeProject = projects[activeProjectId];
 
     return (
         <aside

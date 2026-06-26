@@ -1,13 +1,12 @@
 import React, { useRef } from "react";
 import {
     Search,
-    SlidersHorizontal,
     Plus,
     X,
     ChevronDown,
 } from "lucide-react";
 import { useBoardStore } from "@/store/board-store";
-import { MOCK_USERS, MOCK_LABELS } from "@/lib/mock-data";
+import { MOCK_USERS } from "@/lib/mock-data";
 import { IssuePriority } from "@/types";
 import { PriorityIcon, PRIORITY_CONFIG } from "@/components/ui/PriorityIcon";
 import { Avatar } from "@/components/ui/Avatar";

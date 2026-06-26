@@ -3,8 +3,8 @@ import { X, Loader2 } from "lucide-react";
 import { useBoardStore } from "@/store/board-store";
 import { IssueStatus, IssuePriority } from "@/types";
 import { MOCK_USERS } from "@/lib/mock-data";
-import { PriorityIcon, PRIORITY_CONFIG } from "./PriorityIcon";
-import { StatusBadge, STATUS_CONFIG } from "./StatusBadge";
+import { PRIORITY_CONFIG } from "./PriorityIcon";
+import { STATUS_CONFIG } from "./StatusBadge";
 
 export const CreateIssueModal: React.FC = () => {
     const isOpen = useBoardStore((s) => s.isCreateModalOpen);

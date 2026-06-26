@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import { useBoardStore } from "@/store/board-store";
 import { IssueStatus, IssuePriority, ActivityLogEntry } from "@/types";
-import { PriorityIcon, PRIORITY_CONFIG } from "./PriorityIcon";
-import { STATUS_CONFIG, StatusBadge } from "./StatusBadge";
+import { PRIORITY_CONFIG } from "./PriorityIcon";
+import { STATUS_CONFIG } from "./StatusBadge";
 import { Avatar } from "./Avatar";
 
 const ACTIVITY_VERB: Record<ActivityLogEntry["action"], string> = {
@@ -103,7 +103,7 @@ export const IssueDetailModal: React.FC = () => {
 
     if (!issue) return null; // return  guard
 
-    const assignee = issue.assigneeId ? usersMap[issue.assigneeId] : undefined;
+    //const assignee = issue.assigneeId ? usersMap[issue.assigneeId] : undefined;
     const reporter = usersMap[issue.reporterId];
     const labels = issue.labelIds.map((id) => labelsMap[id]).filter(Boolean);
     const comments = getCommentsForIssue(issue.id);
