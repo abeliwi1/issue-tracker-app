@@ -8,13 +8,14 @@ import {
     Label,
     BoardColumnMap,
     BoardFilters,
-    // IssueStatus,
     CreateIssuePayload,
     UpdateIssuePayload,
     MoveIssuePayload,
     Comment,
     ActivityLogEntry,
     AddCommentPayload,
+    IssueStatus,
+    IssuePriority,
 } from "../types";
 import {
     MOCK_ISSUES,
@@ -112,6 +113,23 @@ const DEFAULT_FILTERS: BoardFilters = {
     labelIds: [],
 };
 
+// Map status and priority values to human-readable labels for displaying changed values in the UI
+
+const STATUS_LABELS: Record<IssueStatus, string> = {
+    [IssueStatus.BACKLOG]: "Backlog",
+    [IssueStatus.TODO]: "Todo",
+    [IssueStatus.IN_PROGRESS]: "In Progress",
+    [IssueStatus.DONE]: "Done",
+};
+
+const PRIORITY_LABELS: Record<IssuePriority, string> = {
+    [IssuePriority.NO_PRIORITY]: "No priority",
+    [IssuePriority.URGENT]: "Urgent",
+    [IssuePriority.HIGH]: "High",
+    [IssuePriority.MEDIUM]: "Medium",
+    [IssuePriority.LOW]: "Low",
+};
+
 // ============================================================
 // Store
 // ============================================================
@@ -190,8 +208,8 @@ export const useBoardStore = create<BoardState & BoardActions>()(
                                     issue.id,
                                     actorId,
                                     "STATUS_CHANGED",
-                                    issue.status,
-                                    payload.status
+                                    STATUS_LABELS[issue.status],       // "In Progress"
+                                    STATUS_LABELS[payload.status]      // "Done" in human readable format
                                 );
                                 state.activityLog[entry.id] = entry;
 
@@ -204,8 +222,8 @@ export const useBoardStore = create<BoardState & BoardActions>()(
                                     issue.id,
                                     actorId,
                                     "PRIORITY_CHANGED",
-                                    issue.priority,
-                                    payload.priority
+                                    PRIORITY_LABELS[issue.priority],     // "High"
+                                    PRIORITY_LABELS[payload.priority]    // "Urgent"
                                 );
                                 state.activityLog[entry.id] = entry;
                                 issue.priority = payload.priority;
