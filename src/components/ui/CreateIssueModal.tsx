@@ -77,7 +77,7 @@ export const CreateIssueModal: React.FC = () => {
             onClick={(e) => e.target === e.currentTarget && closeModal()}
         >
             {/* Blur backdrop */}
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal}/>
 
             {/* Modal panel */}
             <div
